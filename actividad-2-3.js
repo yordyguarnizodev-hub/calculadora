@@ -1,4 +1,5 @@
 function estadisticas(...numeros) {
+  //console.log(numeros);
   //Validamos que en caso de no introducir nada, retorne null
   if (numeros.length === 0) return null;
 

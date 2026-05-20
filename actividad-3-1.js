@@ -6,8 +6,9 @@ function crearMultiplicador(factor) {
   };
 }
 
-const duplicar = crearMultiplicador(2); //Ponemos en la variable duplicar la siguiente funcion
-const triplicar = crearMultiplicador(3);
-
-console.log(duplicar(5)); //Agregamos el argumento numero, ya con los datos procedemos al siguiente return, numero*factor
-console.log(triplicar(5));
+//El primer return, nos pone el factor, pero nos devuelve toda la segunda funcion.
+//El segundo return si nos devuelve lo que buscamos, el resultado de la operacion
+const duplicar = crearMultiplicador(2)(5);
+const triplicar = crearMultiplicador(3)(5);
+console.log(duplicar);
+console.log(triplicar);

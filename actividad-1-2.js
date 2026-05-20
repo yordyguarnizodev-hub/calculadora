@@ -54,7 +54,7 @@ function calculator(value1, value2) {
   value1 = Number(value1);
   value2 = Number(value2);
 
-  //Llamamos la funcion esta al validar por ejemplo "asd" = true, enviara el mensaje. De lo contrario seguira
+  //Llamamos la funcion, esta al validar por ejemplo "asd" = true, enviara el mensaje. De lo contrario seguira
   if (validateNumbers(value1, value2)) {
     return console.log("Por favor introduzca numeros");
   }
