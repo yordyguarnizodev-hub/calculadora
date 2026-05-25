@@ -1,38 +1,60 @@
 //Obtener los valores de los inputs
-let getValues = (id) => document.querySelector(id).value;
+const getValues = (id) => document.querySelector(id).value;
+
+//Imprimir mensajes
+const printMessages = (id, message) =>
+  (document.querySelector(id).textContent = message);
 
 //Convertidor de Celsius a Farenheit
-let celsiusAFahrenheit = (celsiusTemperature) =>
+const celsiusAFahrenheit = (celsiusTemperature) =>
   (celsiusTemperature * (9 / 5) + 32).toFixed(2);
 
 //Convertidor de Farenheit a Celsius
-let farenheitACelsius = (farenheitTemperature) =>
+const farenheitACelsius = (farenheitTemperature) =>
   ((farenheitTemperature - 32) * (5 / 9)).toFixed(2);
 
-//Validador de string vacio
-function validateEmptyString(value) {
-  if (value === "") {
-    return true;
-  }
-}
+//Validadores
+const validateEmptyString = (value) => value.trim() === "";
+const validateNotNumber = (value) => isNaN(value);
+
 //Funcion general
 function convertTemperatures() {
-  let temperatureValue = getValues("#numberOne");
-  let converter = getValues("#operation");
+  const rawTemperature = getValues("#numberOne");
+  const converter = getValues("#operation");
 
-  console.log(temperatureValue);
+  console.log("Input original:", rawTemperature);
 
-  if (validateEmptyString(temperatureValue)) {
-    return (document.querySelector("#output").textContent =
-      `El valor de temperatura se dejo vacio`);
+  // Validar Empty Strings
+  if (validateEmptyString(rawTemperature)) {
+    return printMessages(
+      "#output",
+      `Por favor, ingresa un valor de temperatura válido.`,
+    );
   }
 
+  const temperatureValue = Number(rawTemperature);
+
+  // Validar NaN
+  if (validateNotNumber(temperatureValue)) {
+    return printMessages(
+      "#output",
+      `Error: El valor ingresado no es numérico.`,
+    );
+  }
+
+  // Conversor
   if (converter === "C") {
-    return (document.querySelector("#output").textContent =
-      `En grados Fahrenheit: ${celsiusAFahrenheit(temperatureValue)}`);
-  } else if (converter === "F") {
-    return (document.querySelector("#output").textContent =
-      `En grados Celsius: ${farenheitACelsius(temperatureValue)}`);
+    return printMessages(
+      "#output",
+      `En grados Fahrenheit: ${celsiusAFahrenheit(temperatureValue)}`,
+    );
+  }
+
+  if (converter === "F") {
+    return printMessages(
+      "#output",
+      `En grados Celsius: ${farenheitACelsius(temperatureValue)}`,
+    );
   }
 }
 

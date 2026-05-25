@@ -8,6 +8,18 @@
   <body>
     <h1>Revise la consola del navegador (F12)</h1>
 
+    <div>
+      <input type="text" id="nameInput" placeholder="Nombre" required />
+      <input type="number" id="ageInput" placeholder="Edad" required min="1" />
+      <input type="number" id="gradeInput" placeholder="Nota (0-5)" />
+      <button onclick="addStudent()">Agregar y Calcular</button>
+    </div>
+
+    <div id="errorOutput" style="color: red; margin-top: 10px"></div>
+
+    <h2>Estadísticas del grupo:</h2>
+    <div id="statsOutput"></div>
+
     <script src="actividad-2-2.js"></script>
   </body>
 </html>

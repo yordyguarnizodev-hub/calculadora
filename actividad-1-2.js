@@ -1,54 +1,55 @@
-function getTheElementValue(id) {
-  return document.getElementById(id).value;
-}
+const getTheElementValue = (id) => document.getElementById(id).value;
 
-let addition = (value1, value2) => value1 + value2;
+const addition = (value1, value2) => value1 + value2;
+const substraction = (value1, value2) => value1 - value2;
+const multiplication = (value1, value2) => value1 * value2;
+const division = (value1, value2) => value1 / value2;
 
-let substraction = (value1, value2) => value1 - value2;
+const findEmptyValues = (value1, value2) => value1.trim() === "" || value2.trim() === "";
 
-let multiplication = (value1, value2) => value1 * value2;
+const findNotNumbers = (value1, value2) => isNaN(value1) || isNaN(value2);
 
-let division = (value1, value2) => value1 / value2;
+const printErrorMessages = (id, message) => (document.getElementById(id).innerHTML = message);
 
-function findNotNumbers(value1, value2) {
-  if (isNaN(value1) || isNaN(value2)) {
-    return true;
-  }
-}
-
-function printErrorMessages(id, message) {
-  return (document.getElementById(id).innerHTML = message);
-}
-
-function printValues(id, value1, operationSign, value3, finalResult) {
-  return (document.getElementById(id).innerHTML =
-    `El resultado de ${value1} ${operationSign} ${value3} es igual a ${finalResult}`);
-}
+const printValues = (id, value1, operationSign, value3, finalResult) =>
+  (document.getElementById(id).innerHTML = `El resultado de ${value1} ${operationSign} ${value3} es igual a ${finalResult}`);
 
 function calculate() {
-  let numberOne = parseInt(getTheElementValue("numberOne"));
-  let numberTwo = parseInt(getTheElementValue("numberTwo"));
-  let operator = getTheElementValue("operation");
+  const rawNumberOne = getTheElementValue("numberOne");
+  const rawNumberTwo = getTheElementValue("numberTwo");
+
+  if (findEmptyValues(rawNumberOne, rawNumberTwo)) {
+    return printErrorMessages(
+      "result",
+      "Por favor, llena ambos campos numéricos",
+    );
+  }
+
+  const numberOne = parseInt(rawNumberOne);
+  const numberTwo = parseInt(rawNumberTwo);
+  const operator = getTheElementValue("operation");
   let results;
 
   if (findNotNumbers(numberOne, numberTwo)) {
-    printErrorMessages(
+    return printErrorMessages(
       "result",
       "Revisa los datos por favor, no se incluyeron numeros",
     );
-  } else if (operator === "+") {
+  }
+
+  if (operator === "/" && numberTwo === 0) {
+    return printErrorMessages("result", "No se puede dividir entre 0");
+  }
+
+  if (operator === "+") {
     results = addition(numberOne, numberTwo);
-    printValues("result", numberOne, operator, numberTwo, results);
   } else if (operator === "-") {
     results = substraction(numberOne, numberTwo);
-    printValues("result", numberOne, operator, numberTwo, results);
   } else if (operator === "*") {
     results = multiplication(numberOne, numberTwo);
-    printValues("result", numberOne, operator, numberTwo, results);
-  } else if (operator === "/" && numberTwo !== 0) {
+  } else if (operator === "/") {
     results = division(numberOne, numberTwo);
-    printValues("result", numberOne, operator, numberTwo, results);
-  } else {
-    printErrorMessages("result", "No se puede dividir entre 0");
   }
+
+  return printValues("result", numberOne, operator, numberTwo, results);
 }

@@ -1,50 +1,57 @@
-const writeYourPassword = prompt("Introduzca su contraseña por favor");
+// Sacar los valores del HTML e imprimir el mensaje
+const getValues = (id) => document.querySelector(id).value;
+const printMessages = (id, message) =>
+  (document.querySelector(id).textContent = message);
 
-//Revisa que no se le diera a cancelar, en dado caso dara un valor el cual es null
-function validateNull(password) {
-  if (password === null) return true;
-}
+// Validadores
+const validateEmptyValue = (value) => value.trim() === "";
 
-//Si se le dio OK, nos retornara un string vacio "", esta funcion valida que se diera este resultado
-function validateEmptyValue(password) {
-  if (password === "") return true;
-}
+function checkPassword() {
+  const password = getValues("#passwordInput");
 
-function validatePassword(password) {
-  //Las funciones validan que sea un null o ""
-  if (validateNull(password))
-    return console.log("No se introdujo ningun valor");
+  // Validar empty strings
+  if (validateEmptyValue(password)) {
+    return printMessages(
+      "#output",
+      "Error: Por favor, ingresa una contraseña.",
+    );
+  }
 
-  if (validateEmptyValue(password))
-    return console.log("Se dejo el prompt vacio");
-
-  //Si no son null o "" siguen con los operadores logicos. Todas las comparaciones arrojan true o false
-  let minimumPasswordLength = password.length >= 8;
-  let itHasUpperCase = password !== password.toLowerCase();
-  let itHasANumber = password
+  // Validaciones
+  const minimumPasswordLength = password.length >= 8;
+  const itHasUpperCase = password !== password.toLowerCase();
+  const itHasANumber = password
     .split("")
     .some((letter) => !isNaN(letter) && letter !== " ");
-  let itHasSpecialCharacters = password
+  const itHasSpecialCharacters = password
     .split("")
     .some((letter) => "!@#$%&".includes(letter));
-  let validationsAreTrue =
+
+  const validationsAreTrue =
     minimumPasswordLength &&
     itHasUpperCase &&
     itHasANumber &&
     itHasSpecialCharacters;
 
-  //Devolvemos el objeto con los resultados de arriba
-  return {
+  // Objeto y sus resultados
+  console.log({
     longitudValida: minimumPasswordLength,
     tieneMayuscula: itHasUpperCase,
     tieneNumero: itHasANumber,
     tieneEspecial: itHasSpecialCharacters,
     esValida: validationsAreTrue,
-  };
-}
+  });
 
-const password = validatePassword(writeYourPassword);
-console.log(password);
+  // Mostrar mensaje
+  if (validationsAreTrue) {
+    printMessages("#output", "¡Éxito! Tu contraseña es válida y segura.");
+  } else {
+    printMessages(
+      "#output",
+      "Contraseña débil. Revisa la consola para ver qué requisito te falta.",
+    );
+  }
+}
 
 /*
 let password = "";

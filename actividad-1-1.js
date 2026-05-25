@@ -11,7 +11,7 @@ function validateNullValues(name, hour) {
 
 //Si se dejan los espacios vacios, devuelve ""
 function validateEmptyValues(name, hour) {
-  if (name === "" || hour === "") {
+  if (name.trim() === "" || hour.trim() === "") {
     return true;
   }
 }
@@ -19,6 +19,13 @@ function validateEmptyValues(name, hour) {
 //Se valida si el numero es un entero
 function validateIntengerNumber(hour) {
   if (!Number.isInteger(hour)) {
+    return true;
+  }
+}
+
+//Validar que el dato introducido no sea texto convertido a NaN
+function validateIsNumber(hour) {
+  if (isNaN(hour)) {
     return true;
   }
 }
@@ -53,6 +60,13 @@ function personalizedGreeting(name, hour) {
 
   //Pasamos el string a numero, esto para que el validateHourRange y validateIntengerNumber funcione bien con los numeros alli puestos
   hour = Number(hour);
+
+  if (validateIsNumber(hour)) {
+    return printMessages(
+      "#output",
+      `Por favor digita un número válido para la hora, no letras`,
+    );
+  }
 
   if (validateIntengerNumber(hour)) {
     return printMessages("#output", `Los numeros introducidos no son enteros`);

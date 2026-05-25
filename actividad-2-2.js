@@ -6,33 +6,115 @@ const aprendices = [
   { nombre: "Diego", edad: 23, nota: 4.1 },
 ];
 
-let names = aprendices.map((aprendiz) => aprendiz.nombre); //Crea un nuevo array con los nombres, basicamente va uno por uno y coge los nombres
+// Obtener resultados
+const getValues = (id) => document.querySelector(id).value;
 
-let notesGreatherOrEqualThanFour = aprendices.filter((note) => note.nota >= 4); //Simplemente filtra el valor, si es mayor o igual a 4 lo devuelve como true, si no, lo pasa
+const printMessages = (id, message) => {
+  document.querySelector(id).innerHTML = message;
+};
 
-let averageAges = //El reduce siempre arranca por un valor inicial, en este caso es 0, el que definimos al final, luego coge ese 0 y lo empieza a sumar hasta que se completa todo el cilo con las edades, por ulitmo se dividi en el numero de objetos dentro del array
-  aprendices.reduce(
-    (initialValue, aprendiz) => initialValue + aprendiz.edad,
-    0,
-  ) / aprendices.length;
+// Validadores
+const validateEmptyValue = (value) => value.trim() === "";
+const validateNotNumber = (value) => isNaN(value);
+const validateGradeRange = (grade) => grade < 0 || grade > 5;
+const validateAgeRange = (age) => age <= 0;
 
-let theBest = aprendices.reduce((bestGrade, aprendiz) => {
-  //A diferencia de arriba no hay un valor inicial, entonces lo que hace es coger el primer valor, que es Carlos, y empieza la comparacion, el siguiente es Laura, la nota de Laura es mayor a la de Carlos? No, entonce cae en el else, y asi hasta que complete el ciclo
-  if (aprendiz.nota > bestGrade.nota) {
-    return aprendiz;
-  } else {
+// Función para procesar y mostrar la info
+function calculateStats() {
+  // Se traen los nombres de los aprendices
+  const names = aprendices.map((aprendiz) => aprendiz.nombre);
+
+  // Se filtran las notas mayores o iguales a 4
+  const notesGreatherOrEqualThanFour = aprendices.filter(
+    (note) => note.nota >= 4,
+  );
+
+  // Se calcula el promedio de edad de todos los aprendices
+  const averageAges =
+    aprendices.reduce(
+      (initialValue, aprendiz) => initialValue + aprendiz.edad,
+      0,
+    ) / aprendices.length;
+
+  // Se revisa cual es el mayor puntaje entre los aprendices
+  const theBest = aprendices.reduce((bestGrade, aprendiz) => {
+    if (aprendiz.nota > bestGrade.nota) return aprendiz;
     return bestGrade;
+  });
+
+  // Imprimir mensaje de usuarios actuales,s
+  const statsHTML = `
+   6. Nombres de todos los aprendices:</strong> ${names.join(", ")}<br>
+   <br>
+   7. Aprendices con nota >= 4.0:</strong> ${notesGreatherOrEqualThanFour.map((note) => note.nombre).join(", ")}<br>
+   <br>
+   8. Promedio de edad del grupo:</strong> ${averageAges.toFixed(1)}<br>
+   <br>
+   9. El mejor aprendiz:</strong> ${theBest.nombre} con una nota de ${theBest.nota}
+  `;
+
+  printMessages("#statsOutput", statsHTML);
+}
+
+// Mostrar lo que ya se encuentra hecho.
+calculateStats();
+
+function addStudent() {
+  // Limpiamos mensajes de error previos
+  printMessages("#errorOutput", "");
+
+  const name = getValues("#nameInput");
+  const rawAge = getValues("#ageInput");
+  const rawGrade = getValues("#gradeInput");
+
+  // Validar que ningun campo este vacio
+  if (
+    validateEmptyValue(name) ||
+    validateEmptyValue(rawAge) ||
+    validateEmptyValue(rawGrade)
+  ) {
+    return printMessages(
+      "#errorOutput",
+      "Error: Todos los campos son obligatorios.",
+    );
   }
-});
 
-console.log(`6. Nombres de todos los aprendices: ${names.join(", ")}`); //Los une y los saca del array para volverlos texto
+  //Convertimos en numeros las notas y edad
+  const age = Number(rawAge);
+  const grade = Number(rawGrade);
 
-console.log(
-  `7. Aprendices con nota mayor o igual a 4.0: ${notesGreatherOrEqualThanFour.map((aprendiz) => aprendiz.nombre).join(", ")}`, //Toca utilizar un map, sino quedaria todo como [object]
-);
+  // Se valida que estos no sean unos NaN
+  if (validateNotNumber(age) || validateNotNumber(grade)) {
+    return printMessages(
+      "#errorOutput",
+      "Error: La edad y la nota deben ser valores numéricos.",
+    );
+  }
 
-console.log(`8. Promedio de edad del grupo: ${averageAges}`);
+  // Se valida que la edad sea mayor a 0
+  if (validateAgeRange(age)) {
+    return printMessages(
+      "#errorOutput",
+      "Error: La edad debe ser mayor a cero.",
+    );
+  }
 
-console.log(
-  `9. Aprendiz con la nota más alta: ${theBest.nombre} con una nota de ${theBest.nota}`, //Nos arroja el resultado final
-);
+  // Se valida que las notas no sean menores a 0 o mayores a 5
+  if (validateGradeRange(grade)) {
+    return printMessages(
+      "#errorOutput",
+      "Error: La nota debe estar entre 0.0 y 5.0.",
+    );
+  }
+
+  // Si todos son datos a utilizar le hacemos push con el nuevo dato al array ya existente
+  aprendices.push({ nombre: name.trim(), edad: age, nota: grade });
+
+  // Eliminamos el texto de los inputs, ya la informacion quedo en el array
+  document.querySelector("#nameInput").value = "";
+  document.querySelector("#ageInput").value = "";
+  document.querySelector("#gradeInput").value = "";
+
+  // Volvemos a calcular e imprimir las estadisticas con el nuevo aprendiz
+  calculateStats();
+}
