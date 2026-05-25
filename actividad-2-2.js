@@ -44,13 +44,13 @@ function calculateStats() {
 
   // Imprimir mensaje de usuarios actuales,s
   const statsHTML = `
-   6. Nombres de todos los aprendices:</strong> ${names.join(", ")}<br>
+   6. Nombres de todos los aprendices: ${names.join(", ")}<br>
    <br>
-   7. Aprendices con nota >= 4.0:</strong> ${notesGreatherOrEqualThanFour.map((note) => note.nombre).join(", ")}<br>
+   7. Aprendices con nota >= 4.0:> ${notesGreatherOrEqualThanFour.map((note) => note.nombre).join(", ")}<br>
    <br>
-   8. Promedio de edad del grupo:</strong> ${averageAges.toFixed(1)}<br>
+   8. Promedio de edad del grupo: ${averageAges.toFixed(1)}<br>
    <br>
-   9. El mejor aprendiz:</strong> ${theBest.nombre} con una nota de ${theBest.nota}
+   9. El mejor aprendiz: ${theBest.nombre} con una nota de ${theBest.nota}
   `;
 
   printMessages("#statsOutput", statsHTML);
