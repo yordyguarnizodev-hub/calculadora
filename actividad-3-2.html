@@ -3,10 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ejercicio 3.2</title>
+    <title>Shopping Cart (Exercise 3.2)</title>
+    <link rel="stylesheet" href="actividad-3-2.css" />
   </head>
   <body>
-    <h1>Revise la consola del navegador (F12)</h1>
+    <h1>Shopping Cart</h1>
+
+    <div class="card">
+      <h2>Add Product</h2>
+      <div class="input-group">
+        <input type="number" id="productId" placeholder="ID" />
+        <input type="text" id="productName" placeholder="Name" />
+      </div>
+      <div class="input-group">
+        <input type="number" id="productPrice" placeholder="Price" />
+        <input type="number" id="productQuantity" placeholder="Quantity" />
+      </div>
+      <button onclick="handleAddProduct()">Add to Cart</button>
+    </div>
+
+    <div class="card">
+      <h2>Remove Product</h2>
+      <input type="number" id="removeId" placeholder="Product ID to remove" />
+      <button onclick="handleRemoveProducts()">Remove</button>
+    </div>
+
+    <div class="card">
+      <h2>Apply Discount</h2>
+      <input
+        type="number"
+        id="discountPercent"
+        placeholder="Discount (e.g. 0.1 for 10%)"
+        step="0.01"
+      />
+      <button onclick="handleApplyDiscount()">Apply Discount</button>
+    </div>
+
+    <div class="card">
+      <h2>Cart Contents</h2>
+      <pre id="cartOutput"></pre>
+      <h3>Total: $<span id="totalOutput">0.00</span></h3>
+      <h3>Discount: $<span id="totalDiscount">0% / 0.00</span></h3>
+
+      <p id="messageArea" style="color: red"></p>
+    </div>
 
     <script src="actividad-3-2.js"></script>
   </body>
