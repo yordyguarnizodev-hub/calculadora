@@ -1,6 +1,7 @@
 //Logic of the exercise
 let myCart = [];
 let currentDiscount = 0;
+let finalTotal = 0;
 
 function addProduct(cart, product) {
   // Returns a new array by spreading the old one and adding the new product at the end
@@ -23,6 +24,11 @@ function cartTotal(cart) {
 function discount(cart, percentage) {
   //Apply discount with the total of the cart
   return cartTotal(cart) * percentage;
+}
+
+function finalPrice(cart, discountPercentage) {
+  //Calculate the final price by subtracting the discount to the total of the cart
+  return cartTotal(cart) - discount(cart, discountPercentage);
 }
 
 // Validators
@@ -77,7 +83,6 @@ function returnInformation(product) {
 }
 
 function injectHTML(cart, output) {
-  console.log(cart);
   let fullText = "";
   cart.forEach((product) => {
     fullText += returnInformation(product);
@@ -91,11 +96,13 @@ function injectHTML(cart, output) {
 function saveToLocalStorage() {
   localStorage.setItem("cart", JSON.stringify(myCart)); //Convert the object in text ""
   localStorage.setItem("discount", currentDiscount);
+  localStorage.setItem("finalTotal", finalTotal);
 }
 
 function loadFromLocalStorage() {
   const savedCart = localStorage.getItem("cart");
   const savedDiscount = localStorage.getItem("discount");
+  const savedFinalTotal = localStorage.getItem("finalTotal");
 
   if (savedCart) {
     myCart = JSON.parse(savedCart); //Convert the text again in an object
@@ -180,6 +187,10 @@ function handleAddProduct() {
   document.querySelector("#totalDiscount").textContent =
     `${currentDiscount * 100}% / $${currentTotalDiscount.toFixed(2)}`;
 
+  // Re calculate the final price
+  finalTotal = finalPrice(myCart, currentDiscount);
+  document.querySelector("#finalTotal").textContent = finalTotal.toFixed(2);
+
   // Clean the text in the inputs
   emptyInputSlots(
     "#productId",
@@ -232,7 +243,7 @@ function handleRemoveProducts() {
   // Re print the HTML without the product
   injectHTML(myCart, "#cartOutput");
 
-  // Re calculate the total
+  // Re calculate the subtotal
   const total = cartTotal(myCart);
   document.querySelector("#totalOutput").textContent = total.toFixed(2);
 
@@ -240,6 +251,10 @@ function handleRemoveProducts() {
   const currentTotalDiscount = discount(myCart, currentDiscount);
   document.querySelector("#totalDiscount").textContent =
     `${currentDiscount * 100}% / $${currentTotalDiscount.toFixed(2)}`;
+
+  // Re calculate the final price
+  finalTotal = finalPrice(myCart, currentDiscount);
+  document.querySelector("#finalTotal").textContent = finalTotal.toFixed(2);
 
   // Clean the input field
   emptyInputSlots("#removeId");
@@ -285,9 +300,11 @@ function handleApplyDiscount() {
   currentDiscount = Number(discountValue);
 
   const totalDiscount = discount(myCart, currentDiscount);
-
   document.querySelector("#totalDiscount").textContent =
     `${currentDiscount * 100}% / $${totalDiscount.toFixed(2)}`;
+
+  finalTotal = finalPrice(myCart, currentDiscount);
+  document.querySelector("#finalTotal").textContent = finalTotal.toFixed(2);
 
   // Clean the input field
   emptyInputSlots("#discountPercent");
