@@ -111,6 +111,10 @@ function loadFromLocalStorage() {
   if (savedDiscount) {
     currentDiscount = Number(savedDiscount);
   }
+
+  if (savedFinalTotal) {
+    finalTotal = Number(savedFinalTotal);
+  }
 }
 
 function initializeApp() {
@@ -126,6 +130,10 @@ function initializeApp() {
   const initialDiscount = discount(myCart, currentDiscount);
   document.querySelector("#totalDiscount").textContent =
     `${currentDiscount * 100}% / $${initialDiscount.toFixed(2)}`;
+
+  const initialFinalTotal = finalPrice(myCart, currentDiscount);
+  document.querySelector("#finalTotal").textContent =
+    initialFinalTotal.toFixed(2);
 }
 
 // Add products and show results
