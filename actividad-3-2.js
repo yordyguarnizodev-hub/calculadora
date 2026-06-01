@@ -1,11 +1,12 @@
-//Logic of the exercise
+//Global variables
 let myCart = [];
 let currentDiscount = 0;
 let finalTotal = 0;
 
-function addProduct(cart, product) {
+//Logic of the exercise
+function addProduct(cart, newProduct) {
   // Returns a new array by spreading the old one and adding the new product at the end
-  return [...cart, product];
+  return [...cart, newProduct];
 }
 
 function removeProduct(cart, id) {
@@ -23,7 +24,7 @@ function cartTotal(cart) {
 
 function discount(cart, percentage) {
   //Apply discount with the total of the cart
-  return cartTotal(cart) * percentage;
+  return cartTotal(cart) * (percentage / 100);
 }
 
 function finalPrice(cart, discountPercentage) {
@@ -32,63 +33,52 @@ function finalPrice(cart, discountPercentage) {
 }
 
 // Validators
-function validateEmptyStrings(value) {
-  if (value.trim() === "") return true;
-}
+const validateEmptyStrings = (inputValue) => inputValue.trim() === "";
 
-function noNumber(value) {
-  if (isNaN(value)) return true;
-}
+const noNumber = (inputValue) => isNaN(inputValue);
 
-function theIdAlreadyExist(cart, id) {
-  return cart.some((product) => product.id === Number(id));
-}
+const theIdAlreadyExist = (cart, id) =>
+  cart.some((product) => product.id === Number(id));
 
-function validateNegativeValues(value) {
-  if (value <= 0) return true;
-}
+const validateNegativeValues = (inputValue) => inputValue <= 0;
 
-function discountGreatherThan100(value) {
-  if (value > 1) return true;
-}
+const discountGreatherThan100 = (inputValue) => inputValue > 100;
 
 // Messages and functionalities
+const showErrorMessages = (output, message) =>
+  (document.querySelector(output).textContent = message);
 
-function showErrorMessages(output, message) {
-  return (document.querySelector(output).textContent = message);
-}
+const getElementValue = (selector) => document.querySelector(selector).value;
 
-function getElementValue(selector) {
-  return document.querySelector(selector).value;
-}
-
-function emptyInputSlots(...values) {
-  return values.forEach(
+const emptyInputSlots = (...inputValues) => {
+  inputValues.forEach(
     (selector) => (document.querySelector(selector).value = ""),
   );
-}
+};
 
-function emptyTextSlots(...values) {
-  return values.forEach(
+const emptyTextSlots = (...textValues) => {
+  textValues.forEach(
     (selector) => (document.querySelector(selector).textContent = ""),
   );
-}
+};
 
+// HTML functions
 function returnInformation(product) {
-  return `ID del producto: ${product.id}
-  Nombre: ${product.name}
-  Precio: $${product.price}
-  Cantidad ${product.quantity}
-  ----------------------------\n`;
+  return `
+    <div class="product-card">
+      <h3>${product.name}</h3>
+
+      <p><b>ID:</b> ${product.id}</p>
+      <p><b>Price:</b> $${product.price}</p>
+      <p><b>Quantity:</b> ${product.quantity}</p>
+    </div>
+  `;
 }
 
-function injectHTML(cart, output) {
-  let fullText = "";
-  cart.forEach((product) => {
-    fullText += returnInformation(product);
-  });
-
-  document.querySelector(output).textContent = fullText;
+function printHTML(cart, output) {
+  document.querySelector(output).innerHTML = cart
+    .map(returnInformation)
+    .join("");
 }
 
 //Local Storage
@@ -96,24 +86,18 @@ function injectHTML(cart, output) {
 function saveToLocalStorage() {
   localStorage.setItem("cart", JSON.stringify(myCart)); //Convert the object in text ""
   localStorage.setItem("discount", currentDiscount);
-  localStorage.setItem("finalTotal", finalTotal);
 }
 
 function loadFromLocalStorage() {
   const savedCart = localStorage.getItem("cart");
   const savedDiscount = localStorage.getItem("discount");
-  const savedFinalTotal = localStorage.getItem("finalTotal");
 
-  if (savedCart) {
-    myCart = JSON.parse(savedCart); //Convert the text again in an object
+  if (savedCart !== null) {
+    myCart = JSON.parse(savedCart);
   }
 
-  if (savedDiscount) {
+  if (savedDiscount !== null) {
     currentDiscount = Number(savedDiscount);
-  }
-
-  if (savedFinalTotal) {
-    finalTotal = Number(savedFinalTotal);
   }
 }
 
@@ -122,14 +106,14 @@ function initializeApp() {
   loadFromLocalStorage();
 
   // Print the data in the HTML again
-  injectHTML(myCart, "#cartOutput");
+  printHTML(myCart, "#cartOutput");
 
   const initialTotal = cartTotal(myCart);
   document.querySelector("#totalOutput").textContent = initialTotal.toFixed(2);
 
   const initialDiscount = discount(myCart, currentDiscount);
   document.querySelector("#totalDiscount").textContent =
-    `${currentDiscount * 100}% / $${initialDiscount.toFixed(2)}`;
+    `${currentDiscount}% / $${initialDiscount.toFixed(2)}`;
 
   const initialFinalTotal = finalPrice(myCart, currentDiscount);
   document.querySelector("#finalTotal").textContent =
@@ -184,7 +168,7 @@ function handleAddProduct() {
   myCart = addProduct(myCart, newProduct);
 
   // Print the object in HTML
-  injectHTML(myCart, "#cartOutput");
+  printHTML(myCart, "#cartOutput");
 
   //Calculate the total and print the text in the HTML
   const total = cartTotal(myCart);
@@ -193,7 +177,7 @@ function handleAddProduct() {
   //Re calculate the discount
   const currentTotalDiscount = discount(myCart, currentDiscount);
   document.querySelector("#totalDiscount").textContent =
-    `${currentDiscount * 100}% / $${currentTotalDiscount.toFixed(2)}`;
+    `${currentDiscount}% / $${currentTotalDiscount.toFixed(2)}`;
 
   // Re calculate the final price
   finalTotal = finalPrice(myCart, currentDiscount);
@@ -249,7 +233,7 @@ function handleRemoveProducts() {
   myCart = removeProduct(myCart, Number(removeIdValue));
 
   // Re print the HTML without the product
-  injectHTML(myCart, "#cartOutput");
+  printHTML(myCart, "#cartOutput");
 
   // Re calculate the subtotal
   const total = cartTotal(myCart);
@@ -258,7 +242,7 @@ function handleRemoveProducts() {
   //Re calculate the discount
   const currentTotalDiscount = discount(myCart, currentDiscount);
   document.querySelector("#totalDiscount").textContent =
-    `${currentDiscount * 100}% / $${currentTotalDiscount.toFixed(2)}`;
+    `${currentDiscount}% / $${currentTotalDiscount.toFixed(2)}`;
 
   // Re calculate the final price
   finalTotal = finalPrice(myCart, currentDiscount);
@@ -300,7 +284,7 @@ function handleApplyDiscount() {
   if (discountGreatherThan100(discountValue))
     return showErrorMessages(
       "#messageArea",
-      `El valor del descuento ${(discountValue * 100).toFixed(0)}% es mayor a 100%`,
+      `El valor del descuento ${discountValue}% es mayor a 100%`,
     );
 
   // Main logic
@@ -309,7 +293,7 @@ function handleApplyDiscount() {
 
   const totalDiscount = discount(myCart, currentDiscount);
   document.querySelector("#totalDiscount").textContent =
-    `${currentDiscount * 100}% / $${totalDiscount.toFixed(2)}`;
+    `${currentDiscount}% / $${totalDiscount.toFixed(2)}`;
 
   finalTotal = finalPrice(myCart, currentDiscount);
   document.querySelector("#finalTotal").textContent = finalTotal.toFixed(2);
@@ -322,5 +306,5 @@ function handleApplyDiscount() {
   saveToLocalStorage();
 }
 
-//Initializa app
+//Initialize app
 initializeApp();
