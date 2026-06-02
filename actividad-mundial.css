@@ -1,0 +1,19 @@
+body {
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+
+  color: white;
+}
+
+.card {
+  background-color: white;
+
+  color: black;
+}
+
+h1 {
+  color: white;
+}
+
+.product-card h3 {
+  color: #0a7d32;
+}
