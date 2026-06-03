@@ -5,97 +5,59 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>World Cup Tickets</title>
+    <title>Shopping Cart</title>
 
     <link rel="stylesheet" href="actividad-mundial.css" />
   </head>
 
   <body>
+    <h1>Shopping Cart</h1>
     <main class="container">
-      <h1>⚽ World Cup Ticket Shop</h1>
+      <div class="addContainer">
+        <section class="card">
+          <h2>Add Product</h2>
 
-      <!-- ADD MATCH -->
-      <section class="card">
-        <h2>Add Match</h2>
+          <div class="input-group">
+            <input type="text" id="productName" placeholder="Name" />
+            <select
+              name="month-holder"
+              id="monthHolder"
+              onchange="showMatches()"
+            >
+              <option value="">Select a month</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+            </select>
 
-        <div class="input-group">
-          <input type="number" id="matchId" placeholder="Match ID" />
+            <select
+              name="matchs-holder"
+              id="matchHolder"
+              hidden
+              onchange="showMatchInformation(this)"
+            >
+              <!-- <option value="">Select a match</option>
+              <option value="Match 1">Match 1</option>
+              <option value="Match 2">Match 2</option> -->
+            </select>
+          </div>
 
-          <input type="text" id="teamA" placeholder="Team A" />
-        </div>
+          <button onclick="addToCart()">Add to Cart</button>
+          <p id="messageArea"></p>
+        </section>
+      </div>
 
-        <div class="input-group">
-          <input type="text" id="teamB" placeholder="Team B" />
+      <div class="shoppingContainer">
+        <section class="card">
+          <h2>Cart Contents</h2>
 
-          <input type="text" id="group" placeholder="Group" />
-        </div>
+          <div id="cartOutput"></div>
 
-        <div class="input-group">
-          <input type="date" id="date" />
-
-          <input type="time" id="time" />
-        </div>
-
-        <div class="input-group">
-          <input type="text" id="stadium" placeholder="Stadium" />
-
-          <input type="number" id="ticketPrice" placeholder="Ticket Price" />
-        </div>
-
-        <div class="input-group">
-          <input
-            type="number"
-            id="ticketQuantity"
-            placeholder="Tickets Quantity"
-          />
-        </div>
-
-        <button onclick="handleAddMatch()">Add Match</button>
-      </section>
-
-      <!-- REMOVE MATCH -->
-      <section class="card">
-        <h2>Remove Match</h2>
-
-        <input type="number" id="removeId" placeholder="Match ID to remove" />
-
-        <button onclick="handleRemoveMatch()">Remove Match</button>
-      </section>
-
-      <!-- DISCOUNT -->
-      <section class="card">
-        <h2>Apply Discount</h2>
-
-        <input
-          type="number"
-          id="discountPercent"
-          placeholder="Discount percentage"
-        />
-
-        <button onclick="handleApplyDiscount()">Apply Discount</button>
-      </section>
-
-      <!-- CART -->
-      <section class="card">
-        <h2>Selected Matches</h2>
-
-        <div id="cartOutput"></div>
-
-        <div class="totals">
-          <h3>Sub-total: $<span id="totalOutput">0.00</span></h3>
-
-          <h3>
-            Discount:
-            <span id="totalDiscount">0% / $0.00</span>
-          </h3>
-
-          <h3>Total: $<span id="finalTotal">0.00</span></h3>
-        </div>
-
-        <p id="messageArea"></p>
-      </section>
+          <div class="totals">
+            <h3>Total: $<span id="finalTotal">0.00</span></h3>
+          </div>
+        </section>
+      </div>
     </main>
-
     <script src="actividad-mundial.js"></script>
   </body>
 </html>
