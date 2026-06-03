@@ -115,9 +115,9 @@ const emptyTextMessages = (selector) =>
 
 //Objects and injectHTML
 
-const returnInformation = (name, object) => {
+const returnInformation = (name, object, index) => {
   return `
-  <div class="product-card">
+  <div class="product-card" data-index="${index}">
    <h3>${name}</h3>
    <h3>${object.homeTeam} vs ${object.awayTeam} </h3>
    <p><b>Estadio:</b>${object.stadium}</p>
@@ -144,20 +144,24 @@ const returnInformation = (name, object) => {
 const printHTML = (match, output) => (getElement(output).innerHTML += match);
 
 //localStorage
+
+//Save the cart
 function saveToLocalStorage() {
   localStorage.setItem("myCart", JSON.stringify(cart));
 }
 
+//Load the cart
 function loadFromLocalStorage() {
   const savedCart = localStorage.getItem("myCart");
   if (savedCart !== null) cart = JSON.parse(savedCart);
 }
 
+//Initialize app
 function initializaApp() {
   loadFromLocalStorage();
 
-  cart.forEach((match) => {
-    const cardHTML = returnInformation(match.username, match);
+  cart.forEach((match, index) => {
+    const cardHTML = returnInformation(match.username, match, index);
     printHTML(cardHTML, "#cartOutput");
   });
 
@@ -167,7 +171,6 @@ function initializaApp() {
 }
 
 //Main functions
-
 function showMatches() {
   const monthElement = getElement("#monthHolder");
   const matchElement = getElement("#matchHolder");
@@ -205,6 +208,8 @@ function showMatches() {
    </option>
   `),
   );
+
+  //console.log(filteredMatches);
 }
 
 //Save the selected match
@@ -220,6 +225,7 @@ const calculateTotalValue = (matches) =>
 function increaseQuantity(button) {
   const card = button.closest(".product-card");
   const quantityValue = card.querySelector(".quantity");
+  const cardIndex = Number(card.dataset.index);
 
   //Re print the number in HTML
   let quantityAmount = Number(quantityValue.textContent);
@@ -228,7 +234,7 @@ function increaseQuantity(button) {
 
   //Update cart
   cart = cart.map((match, index) => {
-    if (index === cart.length - 1) {
+    if (index === cardIndex) {
       return {
         ...match,
         quantity: quantityAmount,
@@ -247,14 +253,14 @@ function increaseQuantity(button) {
 
 //Decrease Quantity
 function decreaseQuantity(button) {
+  //Get values
   const card = button.closest(".product-card");
   const quantityValue = card.querySelector(".quantity");
+  const cardIndex = Number(card.dataset.index);
+
+  //Re print the number in HTML
   let quantityAmount = Number(quantityValue.textContent);
-
-  //Decrease
   quantityAmount--;
-
-  //Update HTML
   quantityValue.textContent = quantityAmount;
 
   //Delete card if quantity is 0
@@ -263,9 +269,9 @@ function decreaseQuantity(button) {
     return;
   }
 
-  //Update cart with immutability
+  //Update cart
   cart = cart.map((match, index) => {
-    if (index === cart.length - 1) {
+    if (index === cardIndex) {
       return {
         ...match,
         quantity: quantityAmount,
@@ -283,17 +289,25 @@ function decreaseQuantity(button) {
 }
 
 //Delete Card
-
 function deleteCard(button) {
   const card = button.closest(".product-card");
+  const cardIndex = Number(card.dataset.index);
   card.remove();
 
   //Delete last cart item
-  cart = cart.filter((_, index) => index !== cart.length - 1);
+  cart = cart.filter((_, index) => index !== cardIndex);
 
   //Update total
   const totalValue = calculateTotalValue(cart);
   getElement("#finalTotal").textContent = totalValue;
+
+  const cartOutput = getElement("#cartOutput");
+  cartOutput.innerHTML = "";
+
+  cart.forEach((match, index) => {
+    const cardHTML = returnInformation(match.username, match, index);
+    printHTML(cardHTML, "#cartOutput");
+  });
 
   //Save information to local storage
   saveToLocalStorage();
@@ -316,9 +330,13 @@ function addToCart() {
     return showErrorMessage("#messageArea", "Please choose a match");
 
   //Collect the object information
-  const cardInformation = returnInformation(userName, selectedMatch);
+  const cardInformation = returnInformation(
+    userName,
+    selectedMatch,
+    cart.length,
+  );
 
-  //Immutable cart update
+  //Cart update
   cart = [
     ...cart,
     {
@@ -327,7 +345,7 @@ function addToCart() {
       username: userName,
     },
   ];
-  console.log(cart);
+  //console.log(cart);
 
   //Print the information in HTML
   printHTML(cardInformation, "#cartOutput");
