@@ -1,0 +1,14 @@
+.cards-container {
+  display: grid;
+  grid-template-columns: 0.5fr 3fr 0.5fr;
+  grid-template-rows: auto;
+}
+
+.card {
+  grid-column: 2/3;
+  padding: 1rem;
+}
+
+.card h3 {
+  font-size: 1rem;
+}

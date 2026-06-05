@@ -1,0 +1,28 @@
+.cards-container {
+  display: grid;
+  grid-template-columns: 0.5fr 3fr 0.5fr;
+  grid-template-rows: auto;
+  gap: 1rem;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  grid-column: 2/3;
+  padding: 1rem;
+  background: url("img/font.jpg");
+  background-size: cover;
+  background-position: center;
+  object-fit: fill;
+}
+
+.card h3 {
+  font-size: 1rem;
+  grid-column: 3/6;
+}
+
+.card p {
+  font-size: 1rem;
+  grid-column: 3/6;
+}
