@@ -12,9 +12,12 @@
   grid-column: 2/3;
   padding: 1rem;
   background-image: url("img/font.png");
-  background-size: contain;
+  background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
+  aspect-ratio: 1667 / 624;
+  break-inside: avoid;
+  page-break-inside: avoid;
   font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -63,4 +66,35 @@
   grid-row: 6/7;
   color: #d32f2f;
   font-weight: bold;
+}
+
+.print-container {
+  text-align: center;
+  margin: 20px;
+}
+
+.print-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.print-btn:hover {
+  background-color: #0056b3;
+}
+
+@media print {
+  .print-container {
+    display: none;
+  }
+  
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }
