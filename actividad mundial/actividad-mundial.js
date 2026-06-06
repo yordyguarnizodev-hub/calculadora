@@ -113,6 +113,9 @@ const emptyInputSlots = (...selectors) =>
 const emptyTextMessages = (selector) =>
   (document.querySelector(selector).textContent = "");
 
+const calculateTotalValue = (matches) =>
+  matches.reduce((initial, match) => initial + match.price * match.quantity, 0);
+
 //Objects and injectHTML
 
 const returnInformation = (name, object, index) => {
@@ -125,7 +128,7 @@ const returnInformation = (name, object, index) => {
    <p><b>Hora:</b>${object.time}</p>
    <p><b>Pais:</b>${object.country}</p>
    <p><b>Precio individual:</b>${object.price}</p>
-   <p><b>Cantidad:</b><span class="quantity">1</span></p>
+   <p><b>Cantidad:</b><span class="quantity">${object.quantity ? object.quantity : 1}</span></p>
    <div class="actions">
      <button onclick="decreaseQuantity(this)">
        -
@@ -218,9 +221,6 @@ const showMatchInformation = (index) => {
   //console.log(selectedMatch);
 };
 
-const calculateTotalValue = (matches) =>
-  matches.reduce((initial, match) => initial + match.price * match.quantity, 0);
-
 //Increase Quantity
 function increaseQuantity(button) {
   const card = button.closest(".product-card");
@@ -301,9 +301,11 @@ function deleteCard(button) {
   const totalValue = calculateTotalValue(cart);
   getElement("#finalTotal").textContent = totalValue;
 
+  //Clean the cartOutput
   const cartOutput = getElement("#cartOutput");
   cartOutput.innerHTML = "";
 
+  //Re print the cart in HTML
   cart.forEach((match, index) => {
     const cardHTML = returnInformation(match.username, match, index);
     printHTML(cardHTML, "#cartOutput");

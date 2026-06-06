@@ -7,22 +7,60 @@
 
 .card {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(7, 1fr);
   grid-column: 2/3;
   padding: 1rem;
-  background: url("img/font.jpg");
-  background-size: cover;
+  background-image: url("img/font.png");
+  background-size: contain;
   background-position: center;
-  object-fit: fill;
+  background-repeat: no-repeat;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 .card h3 {
-  font-size: 1rem;
-  grid-column: 3/6;
+  grid-column: 5/6;
+  margin: 0;
+  align-self: center;
+}
+
+.card h3:first-child {
+  grid-row: 3/6;
+  font-size: 1.1rem;
+  color: #444;
+  text-transform: uppercase;
+}
+
+.card h3:nth-of-type(2) {
+  grid-row: 6/7;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #000;
 }
 
 .card p {
-  font-size: 1rem;
-  grid-column: 3/6;
+  grid-column: 6/7;
+  margin: 0;
+  align-self: flex-end;
+  font-size: 1.1rem;
+  color: #222;
+  font-weight: 500;
+}
+
+.card p:nth-of-type(1) {
+  grid-row: 3/4;
+}
+
+.card p:nth-of-type(2) {
+  grid-row: 4/5;
+}
+
+.card p:nth-of-type(3) {
+  grid-row: 5/6;
+}
+
+.card p:nth-of-type(4) {
+  grid-row: 6/7;
+  color: #d32f2f;
+  font-weight: bold;
 }
