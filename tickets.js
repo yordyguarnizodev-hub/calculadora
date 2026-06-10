@@ -24,10 +24,10 @@ function loadSavedCart() {
 function initializeApp() {
   loadSavedCart();
 
-  cart.forEach((match) => {
-    const cardHTML = returnInformation(match);
-    document.querySelector(".cards-container").innerHTML += cardHTML;
-  });
+  const allCardsHTML = cart
+    .map((matches) => returnInformation(matches))
+    .join("");
+  document.querySelector(".cards-container").innerHTML += allCardsHTML;
 }
 
 initializeApp();

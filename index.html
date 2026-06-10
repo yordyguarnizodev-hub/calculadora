@@ -3,21 +3,59 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="actividad-mundial.css" />
   </head>
-  <body>
-    <input type="number" id="numberOne" placeholder="Número 1" />
-    <select id="operation">
-      <option value="+">+</option>
-      <option value="-">-</option>
-      <option value="*">*</option>
-      <option value="/">/</option>
-    </select>
-    <input type="number" id="numberTwo" placeholder="Número 2" />
-    <button onclick="calculate()">Calculate</button>
-    <div id="result"></div>
 
-    <!-- <script src="main.js"></script> -->
-    <script src="main.js"></script>
+  <body>
+    <h1>Shopping Cart</h1>
+    <main class="container">
+      <div class="addContainer">
+        <section class="card">
+          <h2>Add Product</h2>
+
+          <div class="input-group">
+            <input type="text" id="productName" placeholder="Name" />
+            <select
+              name="month-holder"
+              id="monthHolder"
+              onchange="showMatches()"
+            >
+              <option value="">Select a month</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+            </select>
+
+            <select
+              name="matchs-holder"
+              id="matchHolder"
+              hidden
+              onchange="showMatchInformation(this)"
+            >
+              <!-- <option value="">Select a match</option>
+              <option value="Match 1">Match 1</option>
+              <option value="Match 2">Match 2</option> -->
+            </select>
+          </div>
+
+          <button onclick="addToCart()">Add to Cart</button>
+          <p id="messageArea"></p>
+        </section>
+      </div>
+
+      <div class="shoppingContainer">
+        <section class="card">
+          <h2>Tickets</h2>
+
+          <div id="cartOutput"></div>
+
+          <div class="totals">
+            <h3>Total: $<span id="finalTotal">0.00</span></h3>
+            <button onclick="buyTickets()">Comprar</button>
+          </div>
+        </section>
+      </div>
+    </main>
+    <script src="actividad-mundial.js"></script>
   </body>
 </html>

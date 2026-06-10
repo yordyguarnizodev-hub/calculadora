@@ -36,7 +36,7 @@ const groupStageMatches = [
     stadium: "SoFi Stadium",
     date: "2026-06-15",
     time: "21:00",
-    price: 180,
+    price: 180.25,
     country: "United States",
   },
 
@@ -114,7 +114,10 @@ const emptyTextMessages = (selector) =>
   (document.querySelector(selector).textContent = "");
 
 const calculateTotalValue = (matches) =>
-  matches.reduce((initial, match) => initial + match.price * match.quantity, 0);
+  matches.reduce((initial, match) => {
+    const quantity = match.quantity ? match.quantity : 1;
+    return initial + match.price * quantity;
+  }, 0);
 
 //Objects and injectHTML
 
@@ -144,7 +147,23 @@ const returnInformation = (name, object, index) => {
   `;
 };
 
-const printHTML = (match, output) => (getElement(output).innerHTML += match);
+function renderCart(output, totalValueOutput) {
+  const cartOutput = getElement(output);
+
+  const allCardsHTML = cart
+    .map((match, index) => returnInformation(match.username, match, index))
+    .join("");
+
+  //Inject to HTML
+  cartOutput.innerHTML = allCardsHTML;
+
+  //Update the total
+  const totalValue = calculateTotalValue(cart);
+  getElement(totalValueOutput).textContent = totalValue.toFixed(2);
+
+  //Save the information
+  saveToLocalStorage();
+}
 
 //localStorage
 
@@ -162,44 +181,34 @@ function loadFromLocalStorage() {
 //Initialize app
 function initializaApp() {
   loadFromLocalStorage();
-
-  cart.forEach((match, index) => {
-    const cardHTML = returnInformation(match.username, match, index);
-    printHTML(cardHTML, "#cartOutput");
-  });
-
-  //Update total
-  const totalValue = calculateTotalValue(cart);
-  getElement("#finalTotal").textContent = totalValue;
+  renderCart("#cartOutput", "#finalTotal");
 }
 
 //Main functions
 function showMatches() {
   const monthElement = getElement("#monthHolder");
   const matchElement = getElement("#matchHolder");
-
-  //Clear the select before we choose another option,
-  matchElement.innerHTML = "";
   matchElement.hidden = false;
-  matchElement.innerHTML = `
-   <option value=""> Select a match </option>
-  `;
 
-  if (monthElement.value === "June") {
-    filteredMatches = groupStageMatches.filter(
-      (monthDate) => monthDate.date.split("-")[1] === "06",
-    );
-  }
+  //Create an object with the months
+  const monthsMap = {
+    June: "06",
+    July: "07",
+  };
 
-  if (monthElement.value === "July") {
-    filteredMatches = groupStageMatches.filter(
-      (monthDate) => monthDate.date.split("-")[1] === "07",
-    );
-  }
+  const targetMonthNumber = monthsMap[monthElement.value];
 
-  filteredMatches.forEach(
-    (matchInformation, index) =>
-      (matchElement.innerHTML += `
+  // 2. Filter the array based on the month selected
+  filteredMatches = groupStageMatches.filter(
+    (match) => match.date.split("-")[1] === targetMonthNumber,
+  );
+
+  // 3. Inject the HTML
+  const defaultOption = `<option value=""> Select a match </option>`;
+
+  const optionsHTML = filteredMatches
+    .map(
+      (matchInformation, index) => `
    <option value="${index}">
     ${matchInformation.date}:
     ${matchInformation.stadium}
@@ -209,10 +218,14 @@ function showMatches() {
     Individual price:
     ${matchInformation.price}
    </option>
-  `),
-  );
+  `,
+    )
+    .join("");
 
-  //console.log(filteredMatches);
+  console.log(filteredMatches);
+
+  // 4. Inject HTML
+  matchElement.innerHTML = defaultOption + optionsHTML;
 }
 
 //Save the selected match
@@ -224,47 +237,33 @@ const showMatchInformation = (index) => {
 //Increase Quantity
 function increaseQuantity(button) {
   const card = button.closest(".product-card");
-  const quantityValue = card.querySelector(".quantity");
   const cardIndex = Number(card.dataset.index);
 
   //Re print the number in HTML
-  let quantityAmount = Number(quantityValue.textContent);
-  quantityAmount++;
-  quantityValue.textContent = quantityAmount;
-
-  //Update cart
   cart = cart.map((match, index) => {
     if (index === cardIndex) {
-      return {
-        ...match,
-        quantity: quantityAmount,
-      };
+      const currentQuantity = match.quantity ? match.quantity : 1;
+      return { ...match, quantity: currentQuantity + 1 };
     }
     return match;
   });
 
-  //Update total
-  const totalValue = calculateTotalValue(cart);
-  getElement("#finalTotal").textContent = totalValue;
-
-  //Save information to local storage
-  saveToLocalStorage();
+  //Render HTML
+  renderCart("#cartOutput", "#finalTotal");
 }
 
 //Decrease Quantity
 function decreaseQuantity(button) {
-  //Get values
   const card = button.closest(".product-card");
-  const quantityValue = card.querySelector(".quantity");
   const cardIndex = Number(card.dataset.index);
 
-  //Re print the number in HTML
-  let quantityAmount = Number(quantityValue.textContent);
-  quantityAmount--;
-  quantityValue.textContent = quantityAmount;
+  //Get the quantity amount
+  const currentQuantity = cart[cardIndex].quantity
+    ? cart[cardIndex].quantity
+    : 1;
 
-  //Delete card if quantity is 0
-  if (quantityAmount === 0) {
+  //Remove the item if it is lower than 0
+  if (currentQuantity === 1) {
     deleteCard(button);
     return;
   }
@@ -272,47 +271,25 @@ function decreaseQuantity(button) {
   //Update cart
   cart = cart.map((match, index) => {
     if (index === cardIndex) {
-      return {
-        ...match,
-        quantity: quantityAmount,
-      };
+      return { ...match, quantity: currentQuantity - 1 };
     }
     return match;
   });
 
-  //Update total
-  const totalValue = calculateTotalValue(cart);
-  getElement("#finalTotal").textContent = totalValue;
-
-  //Save information to local storage
-  saveToLocalStorage();
+  //Render HTML
+  renderCart("#cartOutput", "#finalTotal");
 }
 
 //Delete Card
 function deleteCard(button) {
   const card = button.closest(".product-card");
   const cardIndex = Number(card.dataset.index);
-  card.remove();
 
   //Delete last cart item
   cart = cart.filter((_, index) => index !== cardIndex);
 
-  //Update total
-  const totalValue = calculateTotalValue(cart);
-  getElement("#finalTotal").textContent = totalValue;
-
-  //Clean the cartOutput
-  const cartOutput = getElement("#cartOutput");
-  cartOutput.innerHTML = "";
-
-  //Re print the cart in HTML
-  cart.forEach((match, index) => {
-    const cardHTML = returnInformation(match.username, match, index);
-    printHTML(cardHTML, "#cartOutput");
-  });
-
-  //Save information to local storage
-  saveToLocalStorage();
+  //Print the HTML
+  renderCart("#cartOutput", "#finalTotal");
 }
 
 function addToCart() {
@@ -331,13 +308,6 @@ function addToCart() {
   if (validateEmptyValue(matchValue))
     return showErrorMessage("#messageArea", "Please choose a match");
 
-  //Collect the object information
-  const cardInformation = returnInformation(
-    userName,
-    selectedMatch,
-    cart.length,
-  );
-
   //Cart update
   cart = [
     ...cart,
@@ -347,21 +317,24 @@ function addToCart() {
       username: userName,
     },
   ];
-  //console.log(cart);
 
-  //Print the information in HTML
-  printHTML(cardInformation, "#cartOutput");
-
-  //Print total
-  const totalValue = calculateTotalValue(cart);
-  getElement("#finalTotal").textContent = totalValue;
+  //Render HTML
+  renderCart("#cartOutput", "#finalTotal");
 
   //Clear inputs and text content
   emptyInputSlots("#productName", "#monthHolder", "#matchHolder");
   emptyTextMessages("#messageArea");
+}
 
-  //Save information to local storage
-  saveToLocalStorage();
+function buyTickets() {
+  if (cart.length === 0) {
+    showErrorMessage(
+      "#messageArea",
+      "Your cart is empty. Please add a match first.",
+    );
+    return;
+  }
+  window.location = "tickets.html";
 }
 
 initializaApp();
