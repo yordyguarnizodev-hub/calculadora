@@ -162,14 +162,14 @@ function renderCart(output, totalValueOutput) {
   getElement(totalValueOutput).textContent = totalValue.toFixed(2);
 
   //Save the information
-  saveToLocalStorage();
+  saveToLocalStorage(cart);
 }
 
 //localStorage
 
 //Save the cart
-function saveToLocalStorage() {
-  localStorage.setItem("myCart", JSON.stringify(cart));
+function saveToLocalStorage(newCart) {
+  localStorage.setItem("myCart", JSON.stringify(newCart));
 }
 
 //Load the cart
